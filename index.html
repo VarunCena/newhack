@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Responsive Image Example with Matrix Effect</title>
+  <style>
+    /* Basic styling for the page */
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column; /* To allow the text to be below the image */
+      min-height: 100vh;
+      background-color: black; /* Black background */
+      overflow: hidden;
+      position: relative; /* To overlay elements on top */
+    }
+
+    /* Matrix background container */
+    .matrix-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      color: #00FF00; /* Green color for binary */
+      font-family: monospace;
+      font-size: 18px; /* Adjust font size */
+      line-height: 18px; /* Adjust line height to make it dense */
+      white-space: nowrap;
+      z-index: 0; /* Behind the image */
+    }
+
+    /* Container for the responsive image */
+    .image-container {
+      max-width: 100%;
+      width: 600px; /* Set a maximum width for the image */
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      position: relative; /* Ensure image stays on top of the background */
+      z-index: 1; /* Keep the image above the matrix effect */
+      opacity: 0; /* Initially hidden */
+      animation: popUpEffect 1s forwards; /* Add pop-up animation */
+      animation-delay: 1s; /* Delay the animation for 1 second */
+    }
+
+    /* Responsive image */
+    .image-container img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: filter 0.3s ease-in-out; /* Smooth transition for color change */
+    }
+
+    /* Matrix line animation */
+    .matrix-line {
+      position: absolute;
+      white-space: nowrap;
+      animation: moveUp 3.8s infinite linear, typingEffect 1s steps(30) forwards; /* Typing effect + upward movement */
+    }
+
+    /* Typing effect */
+    @keyframes typingEffect {
+      0% {
+        width: 0;
+      }
+      100% {
+        width: 100%;
+      }
+    }
+
+    /* Upward movement effect */
+    @keyframes moveUp {
+      0% {
+        transform: translateY(100vh); /* Start from bottom */
+      }
+      100% {
+        transform: translateY(-100vh); /* Move upwards */
+      }
+    }
+
+    /* Pop-up effect for the image */
+    @keyframes popUpEffect {
+      0% {
+        transform: scale(0); /* Start from small scale */
+        opacity: 0; /* Fully transparent */
+      }
+      100% {
+        transform: scale(1); /* Return to normal size */
+        opacity: 1; /* Fully visible */
+      }
+    }
+
+    /* Styling for the text below the image */
+    .warning-text {
+      color: white;
+      font-size: 18px;
+      margin-top: 20px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <!-- Matrix background container -->
+  <div class="matrix-background" id="matrixBackground"></div>
+
+  <!-- Image container -->
+  <div class="image-container">
+    <img id="discoImage" src="Himgs.jpg" alt="Responsive Example Image">
+  </div>
+
+  <!-- Warning text below the image -->
+ 
+  <script>
+    // Function to toggle the green filter on the image
+    let isGreen = false;
+    setInterval(function() {
+      const image = document.getElementById("discoImage");
+      if (isGreen) {
+        image.style.filter = "none"; // Normal image
+      } else {
+        image.style.filter = "sepia(100%) hue-rotate(120deg) saturate(9)"; // Green effect
+      }
+      isGreen = !isGreen; // Toggle the state
+    }, 1000); // Change every 1 second
+
+    // Generate matrix effect
+    function createMatrixLines() {
+      const matrixContainer = document.getElementById("matrixBackground");
+      const columns = Math.floor(window.innerWidth / 18); // Adjusted column density
+      const rows = Math.floor(window.innerHeight / 18); // Adjusted row density
+
+      // Create multiple matrix lines (rows of 0s and 1s)
+      setInterval(() => {
+        let line = document.createElement('div');
+        line.classList.add('matrix-line');
+        line.style.top = `100vh`; // Start from the bottom
+        line.innerHTML = generateRandomBinaryRow(columns); // Generate a random binary row
+        matrixContainer.appendChild(line);
+
+        // Remove line after animation completes to prevent memory overload
+        setTimeout(() => {
+          matrixContainer.removeChild(line);
+        }, 3800); // Adjusted to match the animation speed (3.8s)
+      }, 95); // New row every 95ms (5% faster)
+    }
+
+    // Generate a randomized binary row
+    function generateRandomBinaryRow(length) {
+      let binaryRow = '';
+      for (let i = 0; i < length; i++) {
+        binaryRow += Math.random() > 0.5 ? '1 ' : '0 '; // Random 1 or 0
+      }
+      return binaryRow;
+    }
+
+    // Initialize the matrix lines effect
+    createMatrixLines();
+  </script>
+</body>
+</html>
